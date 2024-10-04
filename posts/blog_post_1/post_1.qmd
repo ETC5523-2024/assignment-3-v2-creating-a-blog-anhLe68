@@ -138,3 +138,120 @@ The dictionary below indicates the variable names and their detailed information
 
 - **Median_age_21** and **Median_income_21**: Average age and personal income of citizens in each suburb of the census year 2021
 
+## The boom of coffee business in Melbourne 
+
+```{r cafe count, echo = FALSE, message=FALSE, warning=FALSE}
+#| label: fig-map-1
+#| fig-cap: "Number of cafes in Melbourne suburbs"
+#| fig-width: 4
+
+vic_coffee_map |> 
+  ggplot() +
+  geom_sf(aes(fill = cafe_count), color = "black", size = 1) +
+  theme_void() +
+  facet_wrap(~census_year) +
+  scale_fill_viridis_c() +
+  labs(title = "Number of cafes in Melbourne suburbs", fill = "Cafe count") 
+```
+
+Over recent years, Melbourne has experienced a significant increase in the number of coffee shops opening across the city. @fig-map-1 illustrates that this growth is not restricted to any particular suburb; yet there had been an exceptionally large number of coffee shops located in the central business district. 
+
+```{r coffee count, echo = FALSE, message=FALSE, warning=FALSE}
+#| label: tbl-1
+#| tbl-cap: "Number of cafes in Melbourne suburbs (2016 and 2021)"
+#| tbl-width: 3
+
+tibble(
+  "Suburb" = vic_coffee_21$Location,
+  "2016" = vic_coffee_16$cafe_count,
+  "2021" = vic_coffee_21$cafe_count) |> 
+  kable() |> 
+  kable_styling(bootstrap_options = "basic", 
+                full_width = F, 
+                position = "center")
+
+```
+
+@tbl-1 shows the number of coffee shops in Melbourne's suburbs in 2016 and 2021. The data indicates that there had been a slight decrease in the number of cafes in most suburbs between two years. This change might be occurred due to the impact of the COVID-19 pandemic on the social distance policies and various business operations causing a significant interruption in the overall food and beverage industry (Miller 2020). Nevertheless, the concentration of coffee shops in Melbourne remains high in particular central suburbs over the periods. What might influence this special pattern, the demographic factors such as age and income levels of residents or other collective elements?
+ 
+
+## Age and Income: Not Major Influences?
+
+It would be easy to assume that areas with higher disposable incomes or a younger demographic might be potentially explain the fueling growth of coffee shops in specific locations. However, research into Melbourne’s suburbs has shown that the portfolio of coffee shops is not significantly tied to the average age or income levels of the residents. 
+
+
+```{r suburb_plot_16, echo = FALSE, message=FALSE, warning=FALSE}
+#| label: fig-plot-1
+#| fig-cap: "Melbourne suburbs, 2016"
+#| fig-width: 6
+#| fig-height: 3
+
+p1 <- vic_coffee_16 |> 
+  ggplot(aes(x = Median_age_16, 
+             y = cafe_count)) + 
+  geom_point(aes(color = Location))  +
+  labs(x = "Median age", y = "Number of coffe shops") +
+  theme(legend.position = "none")
+
+p2 <- vic_coffee_16 |> 
+ ggplot(aes(x = Median_income_16, 
+             y = cafe_count)) + 
+  geom_point(aes(color = Location))  +
+  labs(x = "Median income", y = "Number of coffe shops") +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(), 
+        legend.key.size = unit(0.2, 'cm'),
+        legend.text = element_text(size = 7),
+        legend.title = element_text(size = 10))
+
+suburb_plot_16 <- (p1 | p2 ) + 
+  plot_annotation(title = "Median Age, and Median Income", 
+                  subtitle = "Melbourne Suburbs, 2016")
+
+suburb_plot_16
+
+```
+
+
+```{r suburb_plot_21, echo = FALSE, message=FALSE, warning=FALSE}
+#| label: fig-plot-2
+#| fig-cap: "Melbourne suburbs, 2021"
+#| fig-width: 6
+#| fig-height: 3
+
+p3 <- vic_coffee_21 |> 
+  ggplot(aes(x = Median_age_21, 
+             y = cafe_count)) + 
+  geom_point(aes(color = Location))  +
+  labs(x = "Median age", y = "Number of coffe shops") +
+  theme(legend.position = "none")
+
+p4 <- vic_coffee_21 |> 
+ ggplot(aes(x = Median_income_21, 
+             y = cafe_count)) + 
+  geom_point(aes(color = Location))  +
+  labs(x = "Median income", y = "Number of coffe shops") +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(), 
+        legend.key.size = unit(0.2, 'cm'),
+        legend.text = element_text(size = 7),
+        legend.title = element_text(size = 10))
+
+suburb_plot_21 <- (p3 | p4 ) + 
+  plot_annotation(title = "Median Age, and Median Income", 
+                  subtitle = "Melbourne Suburbs, 2021")
+
+suburb_plot_21
+
+```
+
+@fig-plot-1 and @fig-plot-2 illustrate the relationship between the number of coffee shops and the median age and income levels of residents in Melbourne's suburbs in 2016 and 2021. The data shows that there is no clear correlation between the number of coffee shops and the average age or income levels of residents in Melbourne's suburbs. Specifically, while the left plots in two figure could highlighted the median age of location with higher number of coffee shops, the right ones shows that suburbs with varying median incomes have a scattered distribution of coffee shops.
+
+Furthermore, the central business district and nearby suburbs have a high concentration of coffee shops in both years, with the average age of residents ranging from their mid-twenties to early thirties. This age group was also identified as the most frequent coffee consumers according to the Worldmetrics report (Eser 2024). On the other hand, suburbs with an older demographic and higher median incomes had a moderate to lower number of coffee shops. These areas are likely more focused on residential housing. In conclusion, the distribution of coffee shops seems to be influenced more by the age demographic and lifestyle preferences of residents than by income levels.
+
+#### What other factors drive the boom of coffee business?
+
+The growth of coffee shops in Melbourne is driven by a combination of factors, including the city's vibrant coffee culture, the availability of commercial space, and the lifestyle preferences of residents. The city's coffee culture has been shaped by its diverse population, with a strong emphasis on quality and innovation. The concentration in customer services, product quality and innovative experience has driven the success of small business in this competitive market (Gargano 2015). Additionally, the distribution of commercial and industrial spaces in Melbourne's central business district has also played a key role in the growing demand of F&B shops, with many new cafes and roasteries opening in recent years. Finally, the lifestyle preferences of residents, particularly the younger demographic, have also impacted the demand for specialty coffee and unique cafe experiences.
+
