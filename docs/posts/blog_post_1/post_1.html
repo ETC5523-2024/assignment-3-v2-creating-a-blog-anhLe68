@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -68,6 +102,10 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="../../site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="../../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -149,14 +187,271 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>##Introduction There is a growing in the distribution of food and beverage services, particularly coffee shops, in Melbourne City, and analyzes the relationship between census data and the number of coffee shops in the city.</p>
-<p>##Problem decription</p>
-<p>##Data source &amp; Methodology</p>
-<p>##Analysis</p>
-<p>##Conclusion</p>
-<p>##References</p>
+<section id="melbournes-coffee-business-growth-age-and-income-are-not-key-factors" class="level1">
+<h1>Melbourne’s coffee business growth: Age and Income Are Not Key Factors</h1>
+<p>Melbourne’s vibrant coffee culture is well-known, with the city often referred to as the coffee capital of Australia. From quaint laneway cafes to bustling coffee roasteries, Melbourne’s coffee scene has seen explosive growth over the past few decades. But what influences this boom in coffee shops? The blog will explore the change in the concentration of coffee shops among Melbourne’s suburbs and whether the age and income levels of residents might be the deciding impacts of those trends.</p>
+<section id="data-source-and-methodology" class="level2">
+<h2 class="anchored" data-anchor-id="data-source-and-methodology">Data Source and Methodology</h2>
+<section id="data-collection" class="level4">
+<h4 class="anchored" data-anchor-id="data-collection">Data Collection</h4>
+<p>Aiming to explore the growth of coffee business in Melbourne’s suburbs, different data sets will be collected and observed:</p>
+<ul>
+<li><p>The data set <a href="https://data.melbourne.vic.gov.au/explore/dataset/cafes-and-restaurants-with-seating-capacity/export/?location=13,-37.8044,144.9387&amp;basemap=mbs-7a7333">Cafe, restaurant, bistro seats</a> contains information about cafes and restaurants establishment with seating capacity, detailed address and location in Melbourne.</p></li>
+<li><p>The shapefile <a href="https://www.arcgis.com/home/item.html?id=153afcf67da145fea4d2f21a69a7ef1d">Melbourne Suburbs</a> provides information about the geometric elements and postcodes of Melbourne’s suburbs. This information generates a visualized map of City of Melbourne in the following analysis.</p></li>
+<li><p>Finally, the information about the age and income levels of residents in Melbourne’s suburbs will be collected from the Australian Bureau of Statistics (ABS) Census data. Specifically, the package G02 of <a href="https://www.abs.gov.au/census/find-census-data/datapacks?release=2021&amp;product=GCP&amp;geography=SAL&amp;header=S">Census DataPacks 2021</a> and <a href="https://www.abs.gov.au/census/find-census-data/datapacks?release=2016&amp;product=GCP&amp;geography=SSC&amp;header=S">Census DataPacks 2016</a> will be collected. Here, the census data of two year 2016 and 2021 will be used for further analysis.</p></li>
+</ul>
+</section>
+<section id="data-processing" class="level4">
+<h4 class="anchored" data-anchor-id="data-processing">Data Processing</h4>
+<p>The data sets are processed to extract the necessary information for the analysis. The <strong>vic_coffee_data</strong> is filtered to include the number of cafes and restaurants in Melbourne’s suburbs. The post code information is extracted from the business address to match the suburb map data. The count of coffee shops in each suburb refers to the sum of establishment in each year. Sequentially, the final data set is joined with the suburb map data by the post codes to create a visualized map of coffee shops in Melbourne’s suburbs.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create post code column for coffee shop data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>cafe_data <span class="ot">&lt;-</span> cafe_data <span class="sc">|&gt;</span> </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">post_code =</span> <span class="fu">str_extract</span>(business_address, <span class="st">"</span><span class="sc">\\</span><span class="st">d{4}$"</span>))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Coffee shops count by post code and census year</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>cafe_data_1 <span class="ot">&lt;-</span> cafe_data <span class="sc">|&gt;</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(post_code, census_year) <span class="sc">|&gt;</span> </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">cafe_count =</span> <span class="fu">n</span>())</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>cafe_data_2 <span class="ot">&lt;-</span> cafe_data_1 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">post_code =</span> <span class="fu">as.double</span>(cafe_data_1<span class="sc">$</span>post_code), </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                          <span class="at">census_year =</span> <span class="fu">as.double</span>(cafe_data_1<span class="sc">$</span>census_year),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                          <span class="at">cafe_count =</span> cafe_data_1<span class="sc">$</span>cafe_count) </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>vic_coffee_map <span class="ot">&lt;-</span> suburb_map <span class="sc">|&gt;</span> </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(cafe_data_2, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"postcode"</span> <span class="ot">=</span> <span class="st">"post_code"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The SSC and SAL code of Melbourne’s suburbs in 2016 and 2021 census data is used to match the location names in suburb map data. The <strong>census_suburb_code</strong> data frame is created to store the suburb names and their corresponding codes in the 2016 and 2021 census data. Next, the suburbs code is used to filter the corresponding median age and income information for Melbourne in 2016 and 2021, storing that in the <strong>census_surb</strong> data frame.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>census_suburb_code <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Location =</span> <span class="fu">unique</span>(suburb_map<span class="sc">$</span>Location), </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">SAL_code =</span> <span class="fu">c</span>(<span class="st">"SAL22757"</span>, <span class="st">"SAL21327"</span>, <span class="st">"SAL20929"</span>, <span class="st">"SAL22315"</span>, <span class="st">"SAL21640"</span>, </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"SAL21966"</span>, <span class="st">"SAL22038"</span>, <span class="st">"SAL20496"</span>, <span class="st">"SAL20495"</span>, <span class="st">"SAL20830"</span>, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"SAL22314"</span>, <span class="st">"SAL20766"</span>, <span class="st">"SAL22107"</span>, <span class="st">"SAL22313"</span>), </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">SSC_code =</span> <span class="fu">c</span>(<span class="st">"SSC22743"</span>, <span class="st">"SSC21319"</span>, <span class="st">"SSC20923"</span>, <span class="st">"SSC22304"</span>, <span class="st">"SSC21629"</span>, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"SSC21954"</span>, <span class="st">"SSC22026"</span>, <span class="st">"SSC20493"</span>, <span class="st">"SSC20492"</span>, <span class="st">"SSC20824"</span>, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"SSC22303"</span>, <span class="st">"SSC20760"</span>, <span class="st">"SSC22095"</span>, <span class="st">"SSC22302"</span>))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>census_surb <span class="ot">&lt;-</span> census_suburb_code <span class="sc">|&gt;</span> </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(census_data_21_G02, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"SAL_code"</span> <span class="ot">=</span> <span class="st">"SAL_CODE_2021"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Location, SAL_code, SSC_code, Median_age_persons, Median_tot_prsnl_inc_weekly) <span class="sc">|&gt;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Median_age_21 =</span> Median_age_persons, </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">Median_income_21 =</span> Median_tot_prsnl_inc_weekly)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>census_surb <span class="ot">&lt;-</span> census_surb <span class="sc">|&gt;</span> </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(census_data_16_G02, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"SSC_code"</span> <span class="ot">=</span> <span class="st">"SSC_CODE_2016"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Location, Median_age_21, Median_income_21, Median_age_persons, Median_tot_prsnl_inc_weekly) <span class="sc">|&gt;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Median_age_16 =</span> Median_age_persons, </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">Median_income_16 =</span> Median_tot_prsnl_inc_weekly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>There were no records of cafe shops for South Whaft suburbs after 2015, thus the data was removed from the analysis. The <strong>vic_coffee_16</strong> and <strong>vic_coffee_21</strong> data frame is created to store the number of cafes and census data in Melbourne’s suburbs. The data is created by joining the <strong>vid_coffee_map</strong> and the <strong>census_surb</strong> data frame for further comparison and analysis.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>vic_coffee_21 <span class="ot">&lt;-</span> vic_coffee_map <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(census_year <span class="sc">==</span> <span class="dv">2021</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(census_surb, <span class="at">by =</span> <span class="st">"Location"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span> <span class="fu">c</span>(<span class="st">"Median_age_16"</span>, <span class="st">"Median_income_16"</span>))<span class="sc">|&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(cafe_count))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>vic_coffee_16 <span class="ot">&lt;-</span> vic_coffee_map <span class="sc">|&gt;</span> </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(census_year <span class="sc">==</span> <span class="dv">2016</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(census_surb, <span class="at">by =</span> <span class="st">"Location"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span> <span class="fu">c</span>(<span class="st">"Median_age_21"</span>, <span class="st">"Median_income_21"</span>))  <span class="sc">|&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(cafe_count))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="data-dictionary" class="level4">
+<h4 class="anchored" data-anchor-id="data-dictionary">Data dictionary</h4>
+<p>The dictionary below indicates the variable names and their detailed information.</p>
+<ul>
+<li><p><strong>Location</strong>: Name of Melbourne suburbs (14 distinct observations)</p></li>
+<li><p><strong>postcode</strong>: Aligned Melbourne official suburbs (14 distinct observations)</p></li>
+<li><p><strong>census_year</strong>: Year of census data collecting (From 2002 to 2022)</p></li>
+<li><p><strong>cafe_count</strong>: Number of food and beverage shops in each year</p></li>
+<li><p><strong>geometry</strong>: the polygon data of each suburb’s location, containing the two dimensions: latitude and longitude</p></li>
+<li><p><strong>Median_age_16</strong> and <strong>Median_income_16</strong>: Average age and personal income of citizens in each suburb of the census year 2016</p></li>
+<li><p><strong>Median_age_21</strong> and <strong>Median_income_21</strong>: Average age and personal income of citizens in each suburb of the census year 2021</p></li>
+</ul>
+</section>
+</section>
+<section id="the-boom-of-coffee-business-in-melbourne" class="level2">
+<h2 class="anchored" data-anchor-id="the-boom-of-coffee-business-in-melbourne">The boom of coffee business in Melbourne</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-map-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-map-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="post_1_files/figure-html/fig-map-1-1.png" class="img-fluid figure-img" width="384">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-map-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Number of cafes in Melbourne suburbs
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Over recent years, Melbourne has experienced a significant increase in the number of coffee shops opening across the city. <a href="#fig-map-1" class="quarto-xref">Figure&nbsp;1</a> illustrates that this growth is not restricted to any particular suburb; yet there had been an exceptionally large number of coffee shops located in the central business district.</p>
+<div class="cell" data-tbl-width="3">
+<div id="tbl-1" class="cell quarto-float anchored" data-tbl-width="3">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Number of cafes in Melbourne suburbs (2016 and 2021)
+</figcaption>
+<div aria-describedby="tbl-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<div>
+<table class="table do-not-create-environment cell table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Suburb</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">2016</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">2021</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Melbourne</td>
+<td style="text-align: right;">1977</td>
+<td style="text-align: right;">1757</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Carlton</td>
+<td style="text-align: right;">388</td>
+<td style="text-align: right;">342</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Docklands</td>
+<td style="text-align: right;">347</td>
+<td style="text-align: right;">326</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Southbank</td>
+<td style="text-align: right;">241</td>
+<td style="text-align: right;">223</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">North Melbourne</td>
+<td style="text-align: right;">154</td>
+<td style="text-align: right;">123</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">West Melbourne</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">84</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">East Melbourne</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">76</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kensington</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">55</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Flemington</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">55</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Parkville</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Port Melbourne</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">South Yarra</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Carlton North</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
 
 
+</div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p><a href="#tbl-1" class="quarto-xref">Table&nbsp;1</a> shows the number of coffee shops in Melbourne’s suburbs in 2016 and 2021. The data indicates that there had been a slight decrease in the number of cafes in most suburbs between two years. This change might be occurred due to the impact of the COVID-19 pandemic on the social distance policies and various business operations causing a significant interruption in the overall food and beverage industry (Miller 2020). Nevertheless, the concentration of coffee shops in Melbourne remains high in particular central suburbs over the periods. What might influence this special pattern, the demographic factors such as age and income levels of residents or other collective elements?</p>
+</section>
+<section id="age-and-income-not-major-influences" class="level2">
+<h2 class="anchored" data-anchor-id="age-and-income-not-major-influences">Age and Income: Not Major Influences?</h2>
+<p>It would be easy to assume that areas with higher disposable incomes or a younger demographic might be potentially explain the fueling growth of coffee shops in specific locations. However, research into Melbourne’s suburbs has shown that the portfolio of coffee shops is not significantly tied to the average age or income levels of the residents.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="post_1_files/figure-html/fig-plot-1-1.png" class="img-fluid figure-img" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Melbourne suburbs, 2016
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="post_1_files/figure-html/fig-plot-2-1.png" class="img-fluid figure-img" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Melbourne suburbs, 2021
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-plot-1" class="quarto-xref">Figure&nbsp;2</a> and <a href="#fig-plot-2" class="quarto-xref">Figure&nbsp;3</a> illustrate the relationship between the number of coffee shops and the median age and income levels of residents in Melbourne’s suburbs in 2016 and 2021. The data shows that there is no clear correlation between the number of coffee shops and the average age or income levels of residents in Melbourne’s suburbs. Specifically, while the left plots in two figure could highlighted the median age of location with higher number of coffee shops, the right ones shows that suburbs with varying median incomes have a scattered distribution of coffee shops.</p>
+<p>Furthermore, the central business district and nearby suburbs have a high concentration of coffee shops in both years, with the average age of residents ranging from their mid-twenties to early thirties. This age group was also identified as the most frequent coffee consumers according to the Worldmetrics report (Eser 2024). On the other hand, suburbs with an older demographic and higher median incomes had a moderate to lower number of coffee shops. These areas are likely more focused on residential housing. In conclusion, the distribution of coffee shops seems to be influenced more by the age demographic and lifestyle preferences of residents than by income levels.</p>
+</section>
+<section id="what-other-factors-drive-the-boom-of-coffee-business" class="level2">
+<h2 class="anchored" data-anchor-id="what-other-factors-drive-the-boom-of-coffee-business">What other factors drive the boom of coffee business?</h2>
+<p>The growth of coffee shops in Melbourne is driven by a combination of factors, including the city’s vibrant coffee culture, the availability of commercial space, and the lifestyle preferences of residents. The city’s coffee culture has been shaped by its diverse population, with a strong emphasis on quality and innovation. The concentration in customer services, product quality and innovative experience has driven the success of small business in this competitive market (Gargano 2015). Additionally, the distribution of commercial and industrial spaces in Melbourne’s central business district has also played a key role in the growing demand of F&amp;B shops, with many new cafes and roasteries opening in recent years. Finally, the lifestyle preferences of residents, particularly the younger demographic, have also impacted the demand for specialty coffee and unique cafe experiences.</p>
+</section>
+<section id="what-other-factors-drive-the-boom-of-coffee-business-1" class="level2">
+<h2 class="anchored" data-anchor-id="what-other-factors-drive-the-boom-of-coffee-business-1">What other factors drive the boom of coffee business?</h2>
+<p>The growth of coffee shops in Melbourne is driven by a combination of factors, including the city’s vibrant coffee culture, the availability of commercial space, and the lifestyle preferences of residents. The city’s coffee culture has been shaped by its diverse population, with a strong emphasis on quality and innovation. The concentration in customer services, product quality and innovative experience has driven the success of small business in this competitive market (Gargano 2015). Additionally, the distribution of commercial and industrial spaces in Melbourne’s central business district has also played a key role in the growing demand of F&amp;B shops, with many new cafes and roasteries opening in recent years. Finally, the lifestyle preferences of residents, particularly the younger demographic, have also impacted the demand for specialty coffee and unique cafe experiences.</p>
+</section>
+<section id="a-growing-culture-surpassing-various-factors" class="level2">
+<h2 class="anchored" data-anchor-id="a-growing-culture-surpassing-various-factors">A growing culture surpassing various factors</h2>
+<p>The increasing number of coffee shops in Melbourne over the past few years reveals the city’s vivid coffee culture and the growing demand for this speciality experience across all suburbs. The analysis of the concentration of coffee shops in Melbourne’s suburbs has shown that the growth of coffee shops is not significantly influenced by the age or income levels of residents. Moreover, the scattered distribution of coffee establishments suggests various characteristics of different suburbs, indicating other multiple factors impacting the development of this industry. The coffee business in Melbourne is a testament to the city’s vibrant and diverse culture, and it will continue to thrive in the years to come. Thus, further exploration of the coffee business in Melbourne and other correlating perspectives is needed to understand the entire picture and forecast of this booming industry.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>Arcgis (n.d.) Melbourne Suburbs [Data set]. https://www.arcgis.com/home/item.html?id=153afcf67da145fea4d2f21a69a7ef1d</p>
+<p>Australian Bureau of Statistics (n.d.) Census Datapacks [Data set]. https://www.abs.gov.au/census/find-census-data/datapacks?release=2021&amp;product=GCP&amp;geography=SAL&amp;header=S</p>
+<p>Australian Bureau of Statistics (n.d.) Census Datapacks [Data set]. https://www.abs.gov.au/census/find-census-data/datapacks?release=2016&amp;product=GCP&amp;geography=SSC&amp;header=S</p>
+<p>City of Melbourne (n.d.) Café, restaurant, bistro seats [Data set]. https://data.melbourne.vic.gov.au/explore/dataset/cafes-and-restaurants-with-seating-capacity/export/?location=13,-37.8044,144.9387&amp;basemap=mbs-7a7333</p>
+<p>Eser A (2024, 24 July) Australian Coffee Consumption: Key Stats and Trends Revealed in Study, (WORLDMETRICS.ORG REPORT 2024), World Metrics. https://worldmetrics.org/australian-coffee-consumption-statistics-2/</p>
+<p>Gargano S (2015, April) IBISWorld Industry Report H4511b Cafes and Coffee Shops in Australia (Australian Industry (ANZSIC) Report), Ibis World. https://konacoffeefarmers.org/wp-content/uploads/2015/05/Cafes-and-Coffee-Shops-in-Australia-Industry-Report-Apr-2015.pdf</p>
+<p>Miller E (June 15, 2020), https://www.beanscenemag.com.au/coping-with-covid-19/</p>
+
+
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
