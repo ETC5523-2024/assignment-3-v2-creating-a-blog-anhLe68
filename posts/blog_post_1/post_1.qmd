@@ -2,6 +2,10 @@
 title: "The growth of Australia's coffee business"
 author: "Phuong Anh Le"
 date: "2022-07-18"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show the code"
 categories: [news]
 ---
 
