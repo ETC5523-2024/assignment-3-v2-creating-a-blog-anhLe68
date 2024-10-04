@@ -263,3 +263,18 @@ The growth of coffee shops in Melbourne is driven by a combination of factors, i
 #### A growing culture surpassing various factors
 
 The increasing number of coffee shops in Melbourne over the past few years reveals the city's vivid coffee culture and the growing demand for this speciality experience across all suburbs. The analysis of the concentration of coffee shops in Melbourne's suburbs has shown that the growth of coffee shops is not significantly influenced by the age or income levels of residents. Moreover, the scattered distribution of coffee establishments suggests various characteristics of different suburbs, indicating other multiple factors impacting the development of this industry. The coffee business in Melbourne is a testament to the city's vibrant and diverse culture, and it will continue to thrive in the years to come. Thus, further exploration of the coffee business in Melbourne and other correlating perspectives is needed to understand the entire picture and forecast of this booming industry.
+
+## References
+Arcgis (n.d.) Melbourne Suburbs [Data set]. https://www.arcgis.com/home/item.html?id=153afcf67da145fea4d2f21a69a7ef1d
+
+Australian Bureau of Statistics (n.d.) Census Datapacks [Data set]. https://www.abs.gov.au/census/find-census-data/datapacks?release=2021&product=GCP&geography=SAL&header=S
+
+Australian Bureau of Statistics (n.d.) Census Datapacks [Data set]. https://www.abs.gov.au/census/find-census-data/datapacks?release=2016&product=GCP&geography=SSC&header=S
+
+City of Melbourne (n.d.) Café, restaurant, bistro seats [Data set]. https://data.melbourne.vic.gov.au/explore/dataset/cafes-and-restaurants-with-seating-capacity/export/?location=13,-37.8044,144.9387&basemap=mbs-7a7333
+
+Eser A (2024, 24 July) Australian Coffee Consumption: Key Stats and Trends Revealed in Study, (WORLDMETRICS.ORG REPORT 2024), World Metrics. https://worldmetrics.org/australian-coffee-consumption-statistics-2/
+
+Gargano S (2015, April) IBISWorld Industry Report H4511b Cafes and Coffee Shops in Australia (Australian Industry (ANZSIC) Report), Ibis World. https://konacoffeefarmers.org/wp-content/uploads/2015/05/Cafes-and-Coffee-Shops-in-Australia-Industry-Report-Apr-2015.pdf
+
+Miller E (June 15, 2020), https://www.beanscenemag.com.au/coping-with-covid-19/
