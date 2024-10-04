@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the welcome blog. Welcome!"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ETC5523 Blog Assessment",
+    "section": "",
+    "text": "Welcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nOct 4, 2024\n\n\nPhuong Anh Le\n\n\n\n\n\n\n\n\n\n\n\n\nThe growth of Australia’s coffee business\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJul 18, 2022\n\n\nPhuong Anh Le\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "This is a blog template for the ETC5523 Communicating with Data assessment at Monash University."
+  },
+  {
+    "objectID": "posts/blog_post_1/post_1.html",
+    "href": "posts/blog_post_1/post_1.html",
+    "title": "The growth of Australia’s coffee business",
+    "section": "",
+    "text": "##Introduction There is a growing in the distribution of food and beverage services, particularly coffee shops, in Melbourne City, and analyzes the relationship between census data and the number of coffee shops in the city.\n##Problem decription\n##Data source & Methodology\n##Analysis\n##Conclusion\n##References"
+  }
+]
