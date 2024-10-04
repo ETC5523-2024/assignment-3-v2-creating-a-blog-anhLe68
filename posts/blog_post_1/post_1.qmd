@@ -22,3 +22,101 @@ library(knitr)
 
 Melbourne's vibrant coffee culture is well-known, with the city often referred to as the coffee capital of Australia. From quaint laneway cafes to bustling coffee roasteries, Melbourne’s coffee scene has seen explosive growth over the past few decades. But what influences this boom in coffee shops? The blog will explore the change in the concentration of coffee shops among Melbourne's suburbs and whether the age and income levels of residents might be the deciding impacts of those trends. 
 
+## Data Source and Methodology
+
+#### Data Collection
+Aiming to explore the growth of coffee business in Melbourne's suburbs, different data sets will be collected and observed:
+
+- The data set [Cafe, restaurant, bistro seats](https://data.melbourne.vic.gov.au/explore/dataset/cafes-and-restaurants-with-seating-capacity/export/?location=13,-37.8044,144.9387&basemap=mbs-7a7333) contains information about cafes and restaurants establishment with seating capacity, detailed address and location in Melbourne.
+
+- The shapefile [Melbourne Suburbs](https://www.arcgis.com/home/item.html?id=153afcf67da145fea4d2f21a69a7ef1d) provides information about the geometric elements and postcodes of Melbourne’s suburbs. This information generates a visualized map of City of Melbourne in the following analysis.
+
+- Finally, the information about the age and income levels of residents in Melbourne’s suburbs will be collected from the Australian Bureau of Statistics (ABS) Census data. Specifically, the package G02 of [Census DataPacks 2021](https://www.abs.gov.au/census/find-census-data/datapacks?release=2021&product=GCP&geography=SAL&header=S) and [Census DataPacks 2016](https://www.abs.gov.au/census/find-census-data/datapacks?release=2016&product=GCP&geography=SSC&header=S) will be collected. Here, the census data of two year 2016 and 2021 will be used for further analysis.
+
+```{r data load, echo = FALSE, message=FALSE, warning=FALSE}
+# Coffee shops data load
+cafe_data <- read_sf("data/cafes-and-restaurants-with-seating-capacity.geojson")
+
+# VIC suburb map load
+suburb_map <- read_sf("data/suburb/suburb.shp") 
+suburb_map <- suburb_map |> select(postcode, Location)
+
+# Census data load
+census_data_21_G02 <- read_csv("data/2021Census_G02_VIC_SAL.csv")
+
+census_data_16_G02 <- read_csv("data/2016Census_G02_VIC_SSC.csv")
+```
+
+#### Data Processing
+
+The data sets are processed to extract the necessary information for the analysis. The **vic_coffee_data** is filtered to include the number of cafes and restaurants in Melbourne's suburbs. The post code information is extracted from the business address to match the suburb map data. The count of coffee shops in each suburb refers to the sum of establishment in each year. Sequentially, the final data set is joined with the suburb map data by the post codes to create a visualized map of coffee shops in Melbourne's suburbs.
+
+
+```{r vic coffee map, echo = TRUE, message=FALSE, warning=FALSE}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+# Create post code column for coffee shop data
+cafe_data <- cafe_data |> 
+  mutate(post_code = str_extract(business_address, "\\d{4}$"))
+
+# Coffee shops count by post code and census year
+cafe_data_1 <- cafe_data |> 
+  group_by(post_code, census_year) |> 
+  summarise(cafe_count = n())
+
+cafe_data_2 <- cafe_data_1 <- tibble(post_code = as.double(cafe_data_1$post_code), 
+                          census_year = as.double(cafe_data_1$census_year),
+                          cafe_count = cafe_data_1$cafe_count) 
+
+vic_coffee_map <- suburb_map |> 
+  left_join(cafe_data_2, by = c("postcode" = "post_code"))
+```
+
+
+The SSC and SAL code of Melbourne's suburbs in 2016 and 2021 census data is used to match the location names in suburb map data. The **census_suburb_code** data frame is created to store the suburb names and their corresponding codes in the 2016 and 2021 census data. Next, the suburbs code is used to filter the corresponding median age and income information for Melbourne in 2016 and 2021, storing that in the **census_surb** data frame. 
+
+```{r suburb code, echo = TRUE, message=FALSE, warning=FALSE}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+census_suburb_code <- data.frame(Location = unique(suburb_map$Location), 
+                       SAL_code = c("SAL22757", "SAL21327", "SAL20929", "SAL22315", "SAL21640", 
+                                    "SAL21966", "SAL22038", "SAL20496", "SAL20495", "SAL20830", 
+                                    "SAL22314", "SAL20766", "SAL22107", "SAL22313"), 
+                       SSC_code = c("SSC22743", "SSC21319", "SSC20923", "SSC22304", "SSC21629", 
+                                    "SSC21954", "SSC22026", "SSC20493", "SSC20492", "SSC20824", 
+                                    "SSC22303", "SSC20760", "SSC22095", "SSC22302"))
+
+census_surb <- census_suburb_code |> 
+  left_join(census_data_21_G02, by = c("SAL_code" = "SAL_CODE_2021")) |>
+  select(Location, SAL_code, SSC_code, Median_age_persons, Median_tot_prsnl_inc_weekly) |>
+  rename(Median_age_21 = Median_age_persons, 
+         Median_income_21 = Median_tot_prsnl_inc_weekly)
+
+census_surb <- census_surb |> 
+  left_join(census_data_16_G02, by = c("SSC_code" = "SSC_CODE_2016")) |>
+  select(Location, Median_age_21, Median_income_21, Median_age_persons, Median_tot_prsnl_inc_weekly) |>
+  rename(Median_age_16 = Median_age_persons, 
+         Median_income_16 = Median_tot_prsnl_inc_weekly)
+```
+
+There were no records of cafe shops for South Whaft suburbs after 2015, thus the data was removed from the analysis. The **vic_coffee_16** and **vic_coffee_21** data frame is created to store the number of cafes and census data in Melbourne's suburbs. The data is created by joining the **vid_coffee_map** and the **census_surb** data frame for further comparison and analysis.
+
+```{r census and coffee data, echo = TRUE, message=FALSE, warning=FALSE}
+#| code-fold: true
+#| code-summary: "Show the code"
+
+vic_coffee_21 <- vic_coffee_map |> 
+  filter(census_year == 2021) |> 
+  left_join(census_surb, by = "Location") |> 
+  select(- c("Median_age_16", "Median_income_16"))|>
+  arrange(desc(cafe_count))
+
+vic_coffee_16 <- vic_coffee_map |> 
+  filter(census_year == 2016) |> 
+  left_join(census_surb, by = "Location") |> 
+  select(- c("Median_age_21", "Median_income_21"))  |>
+  arrange(desc(cafe_count))
+```
+
