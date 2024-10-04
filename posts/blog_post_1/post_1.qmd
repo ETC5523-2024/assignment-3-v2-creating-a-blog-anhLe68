@@ -120,3 +120,21 @@ vic_coffee_16 <- vic_coffee_map |>
   arrange(desc(cafe_count))
 ```
 
+#### Data dictionary
+
+The dictionary below indicates the variable names and their detailed information. 
+
+- **Location**: Name of Melbourne suburbs (14 distinct observations)
+
+- **postcode**: Aligned Melbourne official suburbs (14 distinct observations)
+
+- **census_year**: Year of census data collecting (From 2002 to 2022)
+
+- **cafe_count**: Number of food and beverage shops in each year
+
+- **geometry**: the polygon data of each suburb’s location, containing the two dimensions: latitude and longitude
+
+- **Median_age_16** and **Median_income_16**: Average age and personal income of citizens in each suburb of the census year 2016 
+
+- **Median_age_21** and **Median_income_21**: Average age and personal income of citizens in each suburb of the census year 2021
+
