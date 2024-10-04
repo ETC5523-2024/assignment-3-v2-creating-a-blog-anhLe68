@@ -9,19 +9,16 @@ format:
 categories: [news]
 ---
 
-##Introduction
-There is a growing in the distribution of food and beverage services, particularly coffee shops, in Melbourne City, and analyzes the relationship between census data and the number of coffee shops in the city. 
+```{r library, echo = FALSE, message=FALSE, warning=FALSE}
 
+library(tidyverse)
+library(sf)
+library(patchwork)
+library(kableExtra)
+library(knitr)
+```
 
-##Problem decription
+# Melbourne's coffee business growth: Age and Income Are Not Key Factors
 
-
-##Data source & Methodology
-
-##Analysis
-
-
-##Conclusion
-
-##References
+Melbourne's vibrant coffee culture is well-known, with the city often referred to as the coffee capital of Australia. From quaint laneway cafes to bustling coffee roasteries, Melbourne’s coffee scene has seen explosive growth over the past few decades. But what influences this boom in coffee shops? The blog will explore the change in the concentration of coffee shops among Melbourne's suburbs and whether the age and income levels of residents might be the deciding impacts of those trends. 
 
