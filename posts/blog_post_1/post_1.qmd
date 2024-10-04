@@ -38,7 +38,7 @@ Aiming to explore the growth of coffee business in Melbourne's suburbs, differen
 cafe_data <- read_sf("data/cafes-and-restaurants-with-seating-capacity.geojson")
 
 # VIC suburb map load
-suburb_map <- read_sf("data/suburb/suburb.shp") 
+suburb_map <- read_sf("data/suburb.shp") 
 suburb_map <- suburb_map |> select(postcode, Location)
 
 # Census data load
