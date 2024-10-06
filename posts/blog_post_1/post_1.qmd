@@ -22,6 +22,8 @@ library(knitr)
 
 Melbourne's vibrant coffee culture is well-known, with the city often referred to as the coffee capital of Australia. From quaint laneway cafes to bustling coffee roasteries, Melbourne’s coffee scene has seen explosive growth over the past few decades. But what influences this boom in coffee shops? The blog will explore the change in the concentration of coffee shops among Melbourne's suburbs and whether the age and income levels of residents might be the deciding impacts of those trends. 
 
+![](mel_cafe.jpg)
+
 ## Data Source and Methodology
 
 #### Data Collection
