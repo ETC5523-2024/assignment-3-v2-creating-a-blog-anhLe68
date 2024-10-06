@@ -1,13 +1,32 @@
 ---
-title: "About"
-image: profile.jpg
+title: "Phuong Anh Le"
+image: my_pic.jpg
 about:
-  template: jolla
+  template: solana
   links:
     - icon: github
-      text: Github
-      href: https://github.com/etc5523-2022
+      text: GitHub
+      href: https://github.com/anhLe68
 
 ---
 
-This is a blog template for the ETC5523 Communicating with Data assessment at Monash University.
+I am a Master’s student specializing in Business Analytics at Monash University, with a strong passion for data analysis, exploration, and visualization. My academic journey began with a solid foundation in economics and finance, which I pursued during my Bachelor’s degree. This background, combined with hands-on experience in finance and customer service, has sharpened my research and analytical skills, enabling me to generate insightful reports and data-driven solutions.
+
+I am eager to apply my expertise in real-world projects, embracing challenges across diverse fields and tasks. I look forward to leveraging my skills to drive meaningful impact in a dynamic, data-centric environment.
+
+## Education
+
+Monash University | Melbourne, Australia
+Master of Business Analytics | Feb 2024 - Dec 2025
+
+RMIT University | Melbourne, Australia
+Bachelor of Business (Economics and Finance) | Jul 2022 - Dec 2023
+
+RMIT University | Hanoi, Vietnam
+Bachelor of Business (Economics and Finance) | Jul 2021 - Jul 2022
+
+## Experience
+
+Administration | Edify Financial Services | Jul 2023 - Dec 2023
+
+Customer Delegation | AIESEC IN Hanoi - Vietnam | Feb 2021 - Dec 2021
